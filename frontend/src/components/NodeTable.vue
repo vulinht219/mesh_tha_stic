@@ -9,7 +9,6 @@ function selectRow(node) {
 </script>
 
 <template>
-    <div>hi</div>
   <div class="node-table-wrapper">
 
     <table class="node-table">
@@ -65,7 +64,7 @@ function selectRow(node) {
   width: 100%;
   max-height: 500px;
   overflow-y: auto;
-  border-radius: 12px;
+  border-bottom: 1px solid #85aa70;
   background: #1b1b1b;
   padding: 10px;
 }
@@ -77,7 +76,6 @@ function selectRow(node) {
 }
 
 .node-table thead {
-  background: #222;
   position: sticky;
   top: 0;
   z-index: 2;
@@ -88,6 +86,7 @@ function selectRow(node) {
   font-size: 13px;
   font-weight: 600;
   text-align: left;
+  white-space: nowrap;
   color: #ddd;
 }
 

@@ -1,61 +1,72 @@
 <script setup>
-import {ref} from "vue";
+import { ref } from "vue";
 
-const tabs = ["Log", "MediumFast","TEST"];
+const tabs = ["Log", "MediumFast", "TEST"];
 const activeTab = ref("MediumFast");
 
 const logs = ref([
   { time: "10:39:50", id: "877c", msg: "GM" },
   { time: "11:18:12", id: "RRun", msg: "Moin" },
   { time: "12:54:00", id: "BKV5", msg: "GuMo!" },
-  { time: "15:28:47", id: "SIXM", msg: "Welcome Meshtasticajksdhkajshdkajshdkajhdkahsdkjahsd" },
-  // fetch data later 
-]); 
+  {
+    time: "15:28:47",
+    id: "SIXM",
+    msg: "Welcome Meshtasticajksdhkajshdkajshdkajhdkahsdkjahsd",
+  },
+  // fetch data later
+]);
 </script>
 
 <template>
-    <div class="log-panel">
-        <div class="tabs">
-            <span v-for="tab in tabs"
-            :key="tab"
-            :class="['tab', {active: tab === activeTab}]"
-            @click="activeTab = tab">
-            {{ tab }}
-            </span>
-        </div>
-
-        <div class="log-content">
-            <div v-for="(item, index) in logs"
-            :key="index"
-            class="log-line">
-                <span class="time">{{ item.time }}</span>
-                <span class="freq">[868]</span>
-                <span class="channel">[MF]</span>
-                <span class="node-id">{{ item.id }}</span>
-                <span class="msg">{{ item.msg }}</span>
-            </div>
-        </div>
+  <div class="log-panel">
+    <div class="tabs">
+      <span
+        v-for="tab in tabs"
+        :key="tab"
+        :class="['tab', { active: tab === activeTab }]"
+        @click="activeTab = tab"
+      >
+        {{ tab }}
+      </span>
     </div>
+
+    <div class="log-content">
+      <div v-for="(item, index) in logs" :key="index" class="log-line">
+        <span class="time">{{ item.time }}</span>
+        <span class="freq">[868]</span>
+        <span class="channel">[MF]</span>
+        <span class="node-id">{{ item.id }}</span>
+        <span class="msg">{{ item.msg }}</span>
+      </div>
+    </div>
+  </div>
 </template>
+
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Fredoka&display=swap");
+
 .log-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 93%;
   border-radius: 10px;
-  border: 0.5px solid #FFF;
-  background: #4D4848;
+  border: 1px solid #85aa70;
+  background: #313133;
 }
 
 .tabs {
   display: flex;
   justify-content: center;
-  gap: 55px;
+  gap: 100px;
   padding: 5px;
+
   color: white;
-  font-weight: 500;
-  border: 0.5px solid #FFF;
-  border-radius: 10px 10px 0px 0px;
+  font-family: Fredoka;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  border: 1px solid #85aa70;
+  border-radius: 5px 5px 0px 0px;
 }
 
 .tab {
@@ -65,14 +76,17 @@ const logs = ref([
 
 .tab.active {
   opacity: 1;
-  color: #4da6ff;
+  color: #111214;
+  background-color: #85aa70;
+  padding: 2px;
+  border-radius: 5px;
 }
 
 .log-content {
+  flex: 1;
   text-align: left;
   padding: 10px;
   overflow-y: auto;
-  height: 100%;
   color: white;
   font-family: monospace;
   font-size: 14px;
@@ -95,7 +109,8 @@ const logs = ref([
   margin-right: 5px;
 }
 
-.freq, .channel {
+.freq,
+.channel {
   color: #888;
   margin-right: 5px;
 }

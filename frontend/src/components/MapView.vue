@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import L from "leaflet";
+import NodeFilter from "./NodeFilter.vue";
 
 const filter = ref("");
 
@@ -73,13 +74,13 @@ onMounted(() => {
         placeholder="Filter nodes"
         class="filter-input"
       />
-      <button class="icon-btn">☀️</button>
-      <button class="icon-btn">ℹ️</button>
     </div>
 
     <!-- Leaflet Map -->
     <div class="map-wrapper">
       <div id="leaflet-map" class="map"></div>
+
+      <NodeFilter class="node-filter-overlay" />
       
       <!-- Fit map button -->
       <button class="fullscreen-btn" @click="fitMap">⛶</button>
@@ -90,14 +91,12 @@ onMounted(() => {
 
 <style scoped>
 .map-panel {
-  background: #0f0f0f;
-  padding: 16px;
-  border-radius: 12px;
+  background: #111214;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 100%;
-  height: 100%;
+  height: 95%;
 }
 
 /* Filter controls */
@@ -129,9 +128,21 @@ onMounted(() => {
 .map-wrapper {
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 90%;
   border-radius: 12px;
   overflow: hidden;
+}
+
+.node-filter-overlay {
+  position: absolute;
+  top: 80px;
+  z-index: 1000;
+  background: #111214;
+  border: 1px solid #85aa70;
+  border-radius: 6px;
+  padding: 8px;
+  height: 25vw;
+  overflow-y: auto;
 }
 
 .map {

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 
-const tabs = ["Log", "MediumFast", "TEST"];
+const tabs = ["Log", "MediumFast", "Log Raw"];
 const activeTab = ref("MediumFast");
 
 const logs = ref([
@@ -31,13 +31,32 @@ const logs = ref([
     </div>
 
     <div class="log-content">
-      <div v-for="(item, index) in logs" :key="index" class="log-line">
-        <span class="time">{{ item.time }}</span>
-        <span class="freq">[868]</span>
-        <span class="channel">[MF]</span>
-        <span class="node-id">{{ item.id }}</span>
-        <span class="msg">{{ item.msg }}</span>
-      </div>
+      <!-- MediumFast -->
+      <iframe
+        v-if="activeTab === 'MediumFast'"
+        src="http://localhost:3000/d-solo/df6eyul2ex5hce/meshthastic-node-dashboard?orgId=1&from=1768018435908&to=1768040035908&panelId=3"
+        width="450"
+        height="200"
+        frameborder="0"
+      ></iframe>
+
+      <!-- Log -->
+      <iframe
+        v-if="activeTab === 'Log'"
+        src="http://localhost:3000/d-solo/df6eyul2ex5hce/meshthastic-node-dashboard?orgId=1&from=1768018530908&to=1768040130908&panelId=4"
+        width="455"
+        height="200"
+        frameborder="0"
+      ></iframe>
+
+      <!-- TEST -->
+      <iframe
+        v-if="activeTab === 'Log Raw'"
+        src="http://localhost:3000/d-solo/df6eyul2ex5hce/meshthastic-node-dashboard?orgId=1&from=1768018650137&to=1768040250137&panelId=2"
+        width="450"
+        height="200"
+        frameborder="0"
+      ></iframe>
     </div>
   </div>
 </template>
@@ -57,6 +76,7 @@ const logs = ref([
 .tabs {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 100px;
   padding: 5px;
 

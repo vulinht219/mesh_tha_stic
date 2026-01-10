@@ -1,23 +1,34 @@
-from fastapi import FastAPI
-import psycopg2
-import os
+from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
+from db import get_conn
 
 app = FastAPI()
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+# Cho frontend gọi API (CORS)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # sau này siết lại
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/db")
-def test_db():
-    conn = psycopg2.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        dbname=os.getenv("DB_NAME"),
-    )
-    cur = conn.cursor()
-    cur.execute("SELECT 1;")
-    cur.close()
-    conn.close()
-    return {"db": "connected"}
+ALLOWED_TABLES = {"log_raw", "log_test", "log_mediumfast"}
+
+@app.get("/api/logs")
+def get_logs(
+    table: str = Query("log_raw"),
+    limit: int = Query(50, ge=1, le=500),
+):
+    if table not in ALLOWED_TABLES:
+        return {"error": "invalid table"}
+
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            # order by timestamp mới nhất (đa số bảng bạn có cột timestamp)
+            cur.execute(f'SELECT * FROM {table} ORDER BY "timestamp" DESC LIMIT %s', (limit,))
+            rows = cur.fetchall()
+            return {"table": table, "items": rows}
+    finally:
+        conn.close()

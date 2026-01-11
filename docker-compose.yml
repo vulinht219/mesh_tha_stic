@@ -12,10 +12,8 @@ services:
       DB_USER: meshuser
       DB_PASSWORD: meshpass
       DB_NAME: meshdb
-      # nếu backend bạn có dùng influx:
       INFLUX_HOST: influxdb
       INFLUX_PORT: 8086
-      # nếu backend có dùng mqtt:
       MQTT_HOST: mqtt
       MQTT_PORT: 1883
 
@@ -29,7 +27,8 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./db/pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   influxdb:
     image: influxdb:1.8
@@ -45,7 +44,7 @@ services:
       DOCKER_INFLUXDB_INIT_BUCKET: paxbucket
       DOCKER_INFLUXDB_INIT_RETENTION: 0
     volumes:
-      - ./db/influx-data:/var/lib/influxdb2
+      - influx-data:/var/lib/influxdb
 
   grafana:
     image: grafana/grafana:10.2.3
@@ -53,7 +52,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./db/grafana-data:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
     depends_on:
       - postgres
       - influxdb
@@ -67,3 +66,8 @@ services:
     restart: always
     ports:
       - "1883:1883"
+  
+  volumes:
+  postgres-data:
+  influx-data:
+  grafana-data:

@@ -1,4 +1,3 @@
-db/
-grafana-data/
-influx-data/
-pgdata/
+db/pgdata/
+db/grafana-data/
+db/influx-data/

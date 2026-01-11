@@ -1,20 +1,64 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch, nextTick } from "vue";
 
-const tabs = ["Log", "MediumFast", "Log Raw"];
-const activeTab = ref("MediumFast");
+const tabs = ["Log", "MediumFast", "TEST"];
+const activeTab = ref("Log");
 
-const logs = ref([
-  { time: "10:39:50", id: "877c", msg: "GM" },
-  { time: "11:18:12", id: "RRun", msg: "Moin" },
-  { time: "12:54:00", id: "BKV5", msg: "GuMo!" },
-  {
-    time: "15:28:47",
-    id: "SIXM",
-    msg: "Welcome Meshtasticajksdhkajshdkajshdkajhdkahsdkjahsd",
-  },
-  // fetch data later
-]);
+const logs = ref([]);
+const logBox = ref(null);
+let timer = null;
+
+// map tên tab → tên bảng DB
+const tableMap = {
+  Log: "log_raw",
+  TEST: "log_test",
+  MediumFast: "log_mediumfast",
+};
+
+async function fetchLogs(table) {
+  const res = await fetch(
+    `http://localhost:5000/api/logs?table=${table}&limit=100`
+  );
+  const data = await res.json();
+
+  logs.value = data.items
+  .reverse()
+  .map((row) => ({
+    time: new Date(row.timestamp).toLocaleString("de-DE"),
+    freq: 868,
+    channel: "MF",
+    sender: row.sender_node_id,
+    msg: row.message,
+  }));
+
+  await nextTick();
+  if (logBox.value) {
+    logBox.value.scrollTop = logBox.value.scrollHeight;
+  }
+}
+
+function startAutoRefresh(table) {
+  stopAutoRefresh();
+  timer = setInterval(() => fetchLogs(table), 3000);
+}
+
+function stopAutoRefresh() {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+}
+
+watch(activeTab, (tab) => {
+  const table = tableMap[tab];
+
+  if (table) {
+    fetchLogs(table);
+    startAutoRefresh(table);
+  } else {
+    stopAutoRefresh();
+  }
+});
 </script>
 
 <template>
@@ -32,31 +76,15 @@ const logs = ref([
 
     <div class="log-content">
       <!-- MediumFast -->
-      <iframe
-        v-if="activeTab === 'MediumFast'"
-        src="http://localhost:3000/d-solo/df6eyul2ex5hce/meshthastic-node-dashboard?orgId=1&from=1768018435908&to=1768040035908&panelId=3"
-        width="450"
-        height="200"
-        frameborder="0"
-      ></iframe>
-
-      <!-- Log -->
-      <iframe
-        v-if="activeTab === 'Log'"
-        src="http://localhost:3000/d-solo/df6eyul2ex5hce/meshthastic-node-dashboard?orgId=1&from=1768018530908&to=1768040130908&panelId=4"
-        width="455"
-        height="200"
-        frameborder="0"
-      ></iframe>
-
-      <!-- TEST -->
-      <iframe
-        v-if="activeTab === 'Log Raw'"
-        src="http://localhost:3000/d-solo/df6eyul2ex5hce/meshthastic-node-dashboard?orgId=1&from=1768018650137&to=1768040250137&panelId=2"
-        width="450"
-        height="200"
-        frameborder="0"
-      ></iframe>
+      <div v-if="tableMap[activeTab]" class="log-terminal" ref="logBox">
+        <div v-for="(item, index) in logs" :key="index" class="log-row">
+          <span class="time">[{{ item.time }}]</span>
+          <span class="freq">[{{ item.freq }}]</span>
+          <span class="channel">[{{ item.channel }}]</span>
+          <span class="user">{{ item.sender }}</span>
+          <span class="msg">{{ item.msg }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -67,6 +95,7 @@ const logs = ref([
 .log-panel {
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 93%;
   border-radius: 10px;
   border: 1px solid #85aa70;
@@ -112,6 +141,10 @@ const logs = ref([
   font-size: 14px;
 }
 
+.log-content::-webkit-scrollbar {
+  display: none;
+}
+
 .log-line {
   margin-bottom: 5px;
 }
@@ -137,5 +170,35 @@ const logs = ref([
 
 .msg {
   margin-left: 5px;
+}
+
+.log-terminal {
+  font-family: monospace;
+  border-radius: 8px;
+  height: 200px;
+}
+
+.log-row {
+  line-height: 1.6;
+  color: #d1d5db;
+}
+.time {
+  color: #7dd3fc;
+}
+.freq {
+  color: #a78bfa;
+  margin-left: 4px;
+}
+.channel {
+  color: #34d399;
+  margin-left: 4px;
+}
+
+.user {
+  background: #fde68a;
+  color: black;
+  padding: 0 6px;
+  border-radius: 6px;
+  margin: 0 6px;
 }
 </style>

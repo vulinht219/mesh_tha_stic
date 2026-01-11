@@ -1,0 +1,4 @@
+db/
+grafana-data/
+influx-data/
+pgdata/

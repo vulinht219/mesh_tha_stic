@@ -12,10 +12,10 @@ services:
       DB_USER: meshuser
       DB_PASSWORD: meshpass
       DB_NAME: meshdb
-      # nếu backend bạn có dùng influx:
+
       INFLUX_HOST: influxdb
       INFLUX_PORT: 8086
-      # nếu backend có dùng mqtt:
+
       MQTT_HOST: mqtt
       MQTT_PORT: 1883
 
@@ -30,17 +30,13 @@ services:
       - "5433:5432"
     volumes:
       - ./db/pgdata:/var/lib/postgresql/data
-      # Nếu bạn CÓ init.sql và muốn chạy lần đầu, mở comment 2 dòng dưới:
-      # - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   influxdb:
     image: influxdb:1.8
     restart: unless-stopped
     ports:
       - "8086:8086"
-    # ⚠️ InfluxDB 1.8 thường KHÔNG dùng bộ DOCKER_INFLUXDB_INIT_* kiểu 2.x
-    # Giữ cũng không sao, nhưng có thể "không có tác dụng".
-    # Để an toàn, bạn có thể bỏ block environment này nếu thấy lỗi.
+
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
       DOCKER_INFLUXDB_INIT_USERNAME: admin
@@ -49,8 +45,7 @@ services:
       DOCKER_INFLUXDB_INIT_BUCKET: paxbucket
       DOCKER_INFLUXDB_INIT_RETENTION: 0
     volumes:
-      # Repo phụ của bạn mount vào /var/lib/influxdb2 (kiểu 2.x) nhưng image là 1.8
-      # Để "y hệt" repo phụ, giữ nguyên đường dẫn như cũ:
+
       - ./db/influx-data:/var/lib/influxdb2
 
   grafana:

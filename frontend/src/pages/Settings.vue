@@ -167,7 +167,7 @@ import LogPanel from "@/components/LogPanel.vue";
   width: 100%;
   overflow-y: auto;
   margin-bottom: 32px;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-family: Gugi;
 }
 
 .settings-item select {

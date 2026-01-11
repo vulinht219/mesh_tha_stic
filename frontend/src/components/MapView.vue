@@ -127,7 +127,7 @@ onMounted(() => {
 /* Map */
 .map-wrapper {
   position: relative;
-  width: 100%;
+  width: 940px;
   height: 90%;
   border-radius: 12px;
   overflow: hidden;

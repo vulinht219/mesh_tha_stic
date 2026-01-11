@@ -21,9 +21,7 @@ async function fetchLogs(table) {
   );
   const data = await res.json();
 
-  logs.value = data.items
-  .reverse()
-  .map((row) => ({
+  logs.value = data.items.reverse().map((row) => ({
     time: new Date(row.timestamp).toLocaleString("de-DE"),
     freq: 868,
     channel: "MF",
@@ -49,16 +47,20 @@ function stopAutoRefresh() {
   }
 }
 
-watch(activeTab, (tab) => {
-  const table = tableMap[tab];
+watch(
+  activeTab,
+  (tab) => {
+    const table = tableMap[tab];
 
-  if (table) {
-    fetchLogs(table);
-    startAutoRefresh(table);
-  } else {
-    stopAutoRefresh();
-  }
-});
+    if (table) {
+      fetchLogs(table);
+      startAutoRefresh(table);
+    } else {
+      stopAutoRefresh();
+    }
+  },
+  { immediate: true } // 👈 THÊM DÒNG NÀY
+);
 </script>
 
 <template>

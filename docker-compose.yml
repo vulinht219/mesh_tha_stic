@@ -9,9 +9,9 @@ services:
       - mqtt
     environment:
       DB_HOST: postgres
-      DB_USER: meshuser
-      DB_PASSWORD: meshpass
-      DB_NAME: meshdb
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
       INFLUX_HOST: influxdb
       INFLUX_PORT: 8086
       MQTT_HOST: mqtt

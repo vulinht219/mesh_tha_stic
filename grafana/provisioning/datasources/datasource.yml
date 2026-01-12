@@ -1,0 +1,23 @@
+apiVersion: 1
+
+datasources:
+  - name: Postgres
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: mesh
+    secureJsonData:
+      password: meshpass
+    jsonData:
+      database: meshthastic
+      sslmode: disable
+
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    database: paxcounter
+    user: admin
+    secureJsonData:
+      password: adminpass
+    isDefault: true

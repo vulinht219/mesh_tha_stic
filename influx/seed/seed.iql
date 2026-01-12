@@ -1,0 +1,6 @@
+USE paxcounter
+INSERT paxcounter wifi=3,ble=1
+INSERT paxcounter wifi=4,ble=2
+INSERT paxcounter wifi=6,ble=2
+INSERT paxcounter wifi=5,ble=3
+INSERT paxcounter wifi=7,ble=4

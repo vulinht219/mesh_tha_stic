@@ -9,61 +9,81 @@ services:
       - mqtt
     environment:
       DB_HOST: postgres
-      DB_USER: meshuser
-      DB_PASSWORD: meshpass
-      DB_NAME: meshdb
-      # nếu backend bạn có dùng influx:
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
       INFLUX_HOST: influxdb
       INFLUX_PORT: 8086
-      # nếu backend có dùng mqtt:
       MQTT_HOST: mqtt
       MQTT_PORT: 1883
 
+#POSTGRES
   postgres:
     image: postgres:16
+    container_name: postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: meshuser
-      POSTGRES_PASSWORD: meshpass
-      POSTGRES_DB: meshdb
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
-      - ./db/pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
 
+#INFLUX
   influxdb:
     image: influxdb:1.8
+    container_name: influxdb
     restart: unless-stopped
     ports:
       - "8086:8086"
-
     environment:
-      DOCKER_INFLUXDB_INIT_MODE: setup
-      DOCKER_INFLUXDB_INIT_USERNAME: admin
-      DOCKER_INFLUXDB_INIT_PASSWORD: adminpass
-      DOCKER_INFLUXDB_INIT_ORG: mesh-org
-      DOCKER_INFLUXDB_INIT_BUCKET: paxbucket
-      DOCKER_INFLUXDB_INIT_RETENTION: 0
+      INFLUXDB_DB: ${INFLUX_DB}
+      INFLUXDB_ADMIN_USER: ${INFLUX_USER}
+      INFLUXDB_ADMIN_PASSWORD: ${INFLUX_PASSWORD}
     volumes:
-      - ./db/influx-data:/var/lib/influxdb2
+      - influxdata:/var/lib/influxdb
+  
+  influx-seed:
+    image: influxdb:1.8
+    depends_on:
+      - influxdb
+    volumes:
+      - ./influx/seed:/seed:ro
+    entrypoint: ["/bin/bash", "/seed/seed.sh"]
+    restart: "no"
 
+#GRAFANA
   grafana:
     image: grafana/grafana:10.2.3
+    container_name: grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
-    volumes:
-      - ./db/grafana-data:/var/lib/grafana
     depends_on:
       - postgres
       - influxdb
     environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
       GF_AUTH_ANONYMOUS_ENABLED: "true"
-      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Editor"
       GF_SECURITY_ALLOW_EMBEDDING: "true"
+    volumes:
+      - grafanadata:/var/lib/grafana
+      # Provisioning: auto add datasources + auto load dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
 
   mqtt:
     image: eclipse-mosquitto
     restart: always
     ports:
       - "1883:1883"
+
+volumes:
+  pgdata:
+  influxdata:
+  grafanadata:

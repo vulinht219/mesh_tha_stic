@@ -1,0 +1,3 @@
+db/pgdata/
+db/grafana-data/
+db/influx-data/

@@ -5,11 +5,11 @@ datasources:
     type: postgres
     access: proxy
     url: postgres:5432
-    user: meshuser
+    user: mesh
     secureJsonData:
       password: meshpass
     jsonData:
-      database: meshthastic
+      database: meshdb
       sslmode: disable
 
   - name: InfluxDB

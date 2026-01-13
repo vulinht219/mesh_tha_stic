@@ -1,10 +1,10 @@
 #!/bin/bash
-sleep 10
 
-echo "Seeding InfluxDB 1.8..."
+echo "Waiting for InfluxDB..."
+sleep 8
 
-influx -host influxdb -execute "CREATE DATABASE paxcounter"
+echo "Seeding InfluxDB..."
 
-influx -host influxdb -execute "$(cat /seed/seed.iql)"
+influx -execute "$(cat /seed/seed.iql)"
 
-echo "Influx seeded"
+echo "Seed done."

@@ -35,7 +35,8 @@ defineProps({
       </div>
     </div>
 
-    <div class="graph"></div>
+    <div class="graph">
+    <iframe src="http://localhost:3000/d-solo/ef3c1625-361f-486a-86eb-57d2807e7627/paxcounter?orgId=1&from=1768294316419&to=1768294367607&panelId=1" width="700" height="250" frameborder="0"></iframe></div>
   </div>
 </template>
 

@@ -5,6 +5,6 @@ sleep 8
 
 echo "Seeding InfluxDB..."
 
-influx -execute "$(cat /seed/seed.iql)"
+influx -host influxdb -execute "$(cat /seed/seed.iql)"
 
 echo "Seed done."
